@@ -1,5 +1,12 @@
 -- vim: ts=2 sw=2 et :
 
+{- |
+
+Provides the 'HistoryItem' data type, representing an entry in ghci's history 
+listing.
+
+-}
+
 module GHCi.History where
 
 -- | A line and column number in a file.

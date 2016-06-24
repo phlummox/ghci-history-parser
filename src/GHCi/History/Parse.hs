@@ -41,5 +41,11 @@ parseHistory :: String -> Either String [GHCi.History.HistoryItem]
 parseHistory str =
   P.parse C.history "(interactive)" str
 
+-- >>> :{
+--  let myHistory = unlines [
+--          "-1  : fib (src/Stuff.hs:52:8-16)"
+--        , "<end of history>" ]
+-- :}
+-- >>> parseHistory myHistory
 
 
