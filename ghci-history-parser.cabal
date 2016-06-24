@@ -4,7 +4,6 @@ name:               ghci-history-parser
 version:            0.1.0.0
 synopsis:           parse output of ghci ":history" command
 description:
-
   I couldn't see a simple parser for the output of the ghci @:history@
   command, with few dependencies, so here is one.
   .
@@ -17,24 +16,23 @@ license:            PublicDomain
 license-file:       LICENSE
 author:             phlummox
 maintainer:         phlummox2 at gmail dot com
-stability:          Provisional
 category:           GHC, Debug, Development   
 build-type:         Simple
 cabal-version:      >=1.10
 tested-with:        GHC==7.10.3, GHC==7.6.3
 
 extra-doc-files:
-  ChangeLog.md
+  ChangeLog.md, README.md
 extra-source-files:
   stack.yaml        
 
 Flag use_parsec 
-  Description: Use the Parsec parser library
-  Default:     True
+  description: Use the Parsec parser library
+  default:     True
 
 source-repository head
   type:     git
-  location: https://github.com/phlummox/ghci-history-parser
+  location: https://github.com/phlummox/ghci-history-parser.git
 
 library
   exposed-modules:     
