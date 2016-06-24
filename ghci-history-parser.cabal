@@ -82,4 +82,26 @@ test-suite ghci-history-parser-test
   default-language:    
     Haskell98
 
+test-suite ghci-history-parser-doctest
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             DoctestMain.hs
+  if flag(use_parsec)
+    build-depends:       
+        base 
+      , hspec
+      , ghci-history-parser
+      , parsec
+      , doctest
+  else
+    build-depends:       
+        base 
+      , hspec
+      , ghci-history-parser
+      , doctest
+  ghc-options:         
+    -threaded 
+  default-language:    
+    Haskell98
+
 
