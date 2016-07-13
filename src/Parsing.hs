@@ -3,7 +3,7 @@
 {-# LANGUAGE NoMonomorphismRestriction, RankNTypes #-}
 
 {- | Some minimal bits of E Kmett's parser combinator library,
-  https://github.com/ekmett/parsers.
+  <https://github.com/ekmett/parsers>.
 -}
 
 module Parsing (
@@ -16,17 +16,21 @@ where
 import Control.Applicative
 import Control.Monad
 
+-- | Generic Parsing type-class, based on a class
+-- from E Kmett's parser combinator
+-- library, <https://github.com/ekmett/parsers>
 class Alternative m => Parsing m where
-  -- try something, then backtrack if it doesn't work 
+  -- | try something, then backtrack if it doesn't consume anything
   try :: m a -> m a
-  -- | Give a parser a name
+  -- | Give a parser a name. Won't necessarily do anything
+  -- in all implementations. (But works in Parsec.)
   (<?>) :: m a -> String -> m a
  
-  -- | A version of many that discards its input.
+  -- | A version of 'many' that discards its input.
   skipMany :: m a -> m ()
   skipMany p = () <$ many p
  
-  -- | @skipSome p@: apply parser @p@ one or more times, skipping
+  -- | @skipSome p@ will apply parser @p@ one or more times, skipping
   -- its result. (aka skipMany1 in parsec)
   skipSome :: m a -> m ()
   skipSome p = p *> skipMany p

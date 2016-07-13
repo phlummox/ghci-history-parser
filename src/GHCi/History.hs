@@ -9,7 +9,8 @@ listing.
 
 module GHCi.History where
 
--- | A line and column number in a file.
+-- | Represents a position in a source file, line and column,
+-- counting from 1. (Just as GHCi @:history@ output does.)
 data FilePos = FilePos { lineNum :: Int, colNum :: Int }
   deriving (Eq, Show)
 
@@ -24,9 +25,13 @@ data HistoryItem = HistoryItem {
   }
   deriving (Eq, Show)
 
+-- | same as @lineNum . startPos@
 startLine = lineNum . startPos
+-- | same as @colNum . startPos@
 startCol = colNum . startPos
+-- | same as @lineNum . endPos@
 endLine = lineNum . endPos
+-- | same as @colNum . endPos@
 endCol = colNum . endPos
 
 

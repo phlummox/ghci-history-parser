@@ -2,6 +2,12 @@
 
 {-# LANGUAGE RankNTypes #-}
 
+{- |
+
+"Text.ParserCombinators.ReadP" instance of 'Parsing'.
+
+-}
+
 module Parsing.ReadP where
 
 import Parsing
@@ -9,6 +15,7 @@ import qualified Text.ParserCombinators.ReadP as ReadP
 import Text.ParserCombinators.ReadP ( readP_to_S )
 import Data.Char as Ch (isDigit, isSpace)
 
+-- | make 'ReadP.ReadP' an instance of 'Parsing'.
 instance Parsing ReadP.ReadP where
   try             = id
   (<?>)           = const
@@ -39,8 +46,13 @@ newline = char '\n' <?> "lf new-line"
 crlf :: Parser Char
 crlf = char '\r' *> char '\n' <?> "crlf new-line"
 
--- | run a parser on a specified string. The filename argument
--- isn't used for ReadP-based parsing.
+-- | run a 'Parser' computation using 'ReadP'.
+--
+-- @parse p filename s@ runs parser @p@ on the string @s@,
+-- obtained from source @filePath@.
+-- The @filePath@ is not used at all, and may be the empty
+-- string, or even @undefined@. Returns either an error message, a 'String' ('Left') or a
+-- value of type @a@ ('Right').
 parse :: Parser a -> String -> String -> Either String a
 parse p filename s = 
   case readP_to_S p s of

@@ -19,7 +19,7 @@ maintainer:         phlummox2 at gmail dot com
 category:           GHC, Debug, Development   
 build-type:         Simple
 cabal-version:      >=1.10
-tested-with:        GHC==7.10.3, GHC==7.6.3
+tested-with:        GHC == 7.10.3, GHC == 7.6.3
 
 extra-doc-files:
   ChangeLog.md, README.md

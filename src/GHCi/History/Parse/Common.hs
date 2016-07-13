@@ -17,35 +17,39 @@ import GHCi.History (
   , FilePos(..) 
   )
 
+-- | one or more space characters
 someSpace = skipSome space
 
+-- | a number – one or more digits
 num :: Parser Int
 num = read <$> many1 digit
 
--- | @negNum := \'-\' <num>@
+-- | @negNum := \'-\' \<'num'\>@
 negNum :: Parser Int
 negNum = negate <$> (char '-' *> num)
 
--- | @numSpan := <num> \'-\' <num>@
+-- | @numSpan := \<'num'\> \'-\' \<'num'\>@
 numSpan:: Parser (Int, Int) 
 numSpan = (,) <$> num <*> (char '-' *> num)
 
--- | @filePos := \'(\' <num> \',\' <num> \')\'@
+-- | @filePos := \'(\' \<'num'\> \',\' \<'num'\> \')\'@
 filePos :: Parser FilePos
 filePos = FilePos <$> (char '(' *> num) <*> (char ',' *> num <* char ')')
 
--- | @unabbrevPosRange := \'(\' <filePos> \')-(\' <filePos> \')\'@
+-- | @unabbrevPosRange := \'(\' \<'filePos'\> \')-(\' \<'filePos'\> \')\'@
 unabbrevPosRange :: Parser (FilePos , FilePos )
 unabbrevPosRange = (,) <$> filePos <*> (char '-' *> filePos)
 
--- | @abbrevPosRange :=  <num> \':\' <num> \'-\' <num>@
+-- | @abbrevPosRange :=  \<'num'\> \':\' \<'num'\> \'-\' \<'num'\>@
 abbrevPosRange :: Parser (FilePos , FilePos )
 abbrevPosRange = mkRange <$> num <*> (char ':' *> num) <*> (char '-' *> num)
   where
     mkRange ln stCol endCol = (FilePos ln stCol, FilePos ln endCol)
 
+-- | @'posRange' := \<'abbrevPosRange'\> | \<'unabbrevPosRange'\>@
 posRange = abbrevPosRange <|> unabbrevPosRange
 
+-- | string representing a filename. Can't contain \"@:@\".
 filename :: Parser String
 filename = many1 $ noneOf ":"
 
@@ -55,18 +59,22 @@ funcname :: Parser String
 funcname = someSpace *> option "" (string "\ESC[1m") *> many1 (noneOf " \ESC") <* option "" (string "\ESC[0m") <* someSpace
  
 
--- | @histLine := <negNum> \':\' <funcname> \'(\' <filename> \':\' <posRange> \')\'@
+-- | @histLine := \<'negNum'\> \':\' \<'funcname'\> \'(\' \<'filename'\> \':\' \<'posRange'\> \')\'@
 histLine :: Parser HistoryItem
 histLine = 
   mkHistLine <$> (negNum <* someSpace <* char ':') <*> funcname  <*> (char '(' *> filename <* char ':') <*> posRange <* char ')'
   where
     mkHistLine n func file (startPos, endPos) = HistoryItem n func file startPos endPos
 
+-- | An empty history start with the string \"Empty history\".
 emptyHistory :: Parser [HistoryItem]
 emptyHistory = const [] <$> string "Empty history." <* manyTill anyChar eof
 
+-- | A non-empty history: one or more 'histLine's,
+-- followed by the string \"@\<end of history\>@\", or \"@...@\" 
+-- if ghci has cut off remaining entries due to length.
 nonEmptyHistory = manyTill (histLine <* endOfLine) (string "<end of history>"  <|> string "..." )
 
-
+-- | @'history' := \<'emptyHistory'\> | \<'nonEmptyHistory'\>@
 history = emptyHistory <|> nonEmptyHistory
 
