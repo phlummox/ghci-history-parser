@@ -42,12 +42,26 @@ unabbrevPosRange = (,) <$> filePos <*> (char '-' *> filePos)
 
 -- | @abbrevPosRange :=  \<'num'\> \':\' \<'num'\> \'-\' \<'num'\>@
 abbrevPosRange :: Parser (FilePos , FilePos )
-abbrevPosRange = mkRange <$> num <*> (char ':' *> num) <*> (char '-' *> num)
+abbrevPosRange = 
+  let
+    lineAndStartCol = try $ ( (,) :: Int -> Int -> (Int, Int)) <$> num <*> (char ':' *> num) <* (char '-') 
+  in
+    mkRange <$> lineAndStartCol <*> num
   where
-    mkRange ln stCol endCol = (FilePos ln stCol, FilePos ln endCol)
+    mkRange (ln, stCol) endCol = (FilePos ln stCol, FilePos ln endCol)
 
--- | @'posRange' := \<'abbrevPosRange'\> | \<'unabbrevPosRange'\>@
-posRange = abbrevPosRange <|> unabbrevPosRange
+-- | @pointRange :=  \<'num'\> \':\' \<'num'\>@
+--
+-- A "point range" – i.e., a "range" whose start point and end point
+-- are the same.
+pointRange :: Parser (FilePos, FilePos )
+pointRange = mkRange <$> num <*> (char ':' *> num)
+  where
+    mkRange ln stCol = (FilePos ln stCol, FilePos ln stCol)
+
+
+-- | @'posRange' := \<'abbrevPosRange'\> | \<'pointRange'\> | \<'unabbrevPosRange'\>@
+posRange = abbrevPosRange <|> pointRange <|> unabbrevPosRange
 
 -- | string representing a filename. Can't contain \"@:@\".
 filename :: Parser String
@@ -66,7 +80,7 @@ histLine =
   where
     mkHistLine n func file (startPos, endPos) = HistoryItem n func file startPos endPos
 
--- | An empty history start with the string \"Empty history\".
+-- | An empty history starts with the string \"Empty history\".
 emptyHistory :: Parser [HistoryItem]
 emptyHistory = const [] <$> string "Empty history." <* manyTill anyChar eof
 

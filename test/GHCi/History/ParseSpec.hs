@@ -84,6 +84,18 @@ spec = do
         \x -> isLeft x && (length (left x) > 0)
 
 
+  describe "parseHistory" $ do
+    it "should successfully parse 'point ranges'" $ do
+      let
+        pointRangeStr = unlines 
+          ["-1  : fib (fib.hs:3:10)"
+          ,"-2  : fib:a (fib.hs:6:14-16)"
+          ,"<end of history>"]
+        pointRangeExpected = [
+          HistoryItem (-1) "fib" "fib.hs" (FilePos 3 10) (FilePos 3 10)
+          ,HistoryItem (-2) "fib:a" "fib.hs" (FilePos 6 14) (FilePos 6 16)
+          ]
+      parseHistory pointRangeStr `shouldBe` (Right pointRangeExpected) 
 
 
 
