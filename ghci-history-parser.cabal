@@ -1,7 +1,7 @@
 -- vim: ts=2 sw=2 et :
 
 name:               ghci-history-parser
-version:            0.1.0.1
+version:            0.1.0.2
 synopsis:           parse output of ghci ":history" command
 description:
   I couldn't see a simple parser for the output of the ghci @:history@
