@@ -1,4 +1,4 @@
-# ghci-history-parser
+# ghci-history-parser [![Hackage version](https://img.shields.io/hackage/v/ghci-history-parser.svg?label=Hackage)](https://hackage.haskell.org/package/ghci-history-parser) [![Linux Build Status](https://img.shields.io/travis/phlummox/ghci-history-parser.svg?label=Linux%20build)](https://travis-ci.org/phlummox/ghci-history-parser)
 
 ## Parse the output of ghci's ":history" command
 
